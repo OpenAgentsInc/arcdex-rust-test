@@ -10,6 +10,10 @@
 //!
 //! You can use this example together with the `server` example.
 
+extern crate serde;
+extern crate serde_json;
+
+use arcdex::event::Event;
 use std::env;
 
 use futures_util::{future, pin_mut, StreamExt};
@@ -44,12 +48,17 @@ async fn main() {
     let stdin_to_ws = stdin_rx.map(Ok).forward(write);
 
     // Create a stream for forwarding data from the WebSocket to stdout
-    let ws_to_stdout = {
-        read.for_each(|message| async {
-            let data = message.unwrap().into_data();
-            tokio::io::stdout().write_all(&data).await.unwrap();
-        })
-    };
+    let ws_to_stdout = read.for_each_concurrent(None, |message| {
+        let text = message.unwrap().into_text().unwrap();
+        // let _event: Event = serde_json::from_str(&text).unwrap();
+        // Do something with event, e.g. save it to a database
+        async move {
+            tokio::io::stdout()
+                .write_all(&text.as_bytes())
+                .await
+                .unwrap();
+        }
+    });
 
     // Pin the streams to prevent them from being moved
     pin_mut!(stdin_to_ws, ws_to_stdout);

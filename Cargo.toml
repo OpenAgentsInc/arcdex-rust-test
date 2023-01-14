@@ -4,10 +4,28 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+bitcoin_hashes = { version = "0.10", features = ["serde"] }
+config = { version = "0.12", features = ["toml"] }
+const_format = "0.2.28"
 futures-channel = "0.3.25"
 futures-util = "0.3.25"
+governor = "0.4"
+hex = "0.4"
+http = { version = "0.2" }
+hyper = { version="0.14", features=["client", "server", "http1", "http2", "tcp"] }
+hyper-tls = "0.5"
+lazy_static = "1.4"
+parse_duration = "2"
+r2d2 = "0.8"
+r2d2_sqlite = "0.19"
 rand = "0.8.5"
+rusqlite = { version = "0.26", features = ["limits","bundled","modern_sqlite", "trace"]}
+secp256k1 = {version = "0.21", features = ["rand", "rand-std", "serde", "bitcoin_hashes"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = {version = "1.0", features = ["preserve_order"]}
+thiserror = "1"
 tokio = { version = "1", features = ["full", "tracing", "signal"] }
 tokio-tungstenite = { version = "0.17", features = ["native-tls"] }
+tracing = "0.1.36"
 tungstenite = "0.17"
 url = "2.3.1"

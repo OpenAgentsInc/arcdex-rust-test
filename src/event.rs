@@ -1,5 +1,5 @@
 //! Event parsing and validation
-use crate::delegation::validate_delegation;
+// use crate::delegation::validate_delegation;
 use crate::error::Error::*;
 use crate::error::Result;
 use crate::nip05;
@@ -93,7 +93,7 @@ impl From<EventCmd> for Result<Event> {
             ec.event.validate().map(|_| {
                 let mut e = ec.event;
                 e.build_index();
-                e.update_delegation();
+                // e.update_delegation();
                 e
             })
         }
@@ -138,47 +138,47 @@ impl Event {
     // is this event delegated (properly)?
     // does the signature match, and are conditions valid?
     // if so, return an alternate author for the event
-    pub fn delegated_author(&self) -> Option<String> {
-        // is there a delegation tag?
-        let delegation_tag: Vec<String> = self
-            .tags
-            .iter()
-            .filter(|x| x.len() == 4)
-            .filter(|x| x.get(0).unwrap() == "delegation")
-            .take(1)
-            .next()?
-            .to_vec(); // get first tag
+    // pub fn delegated_author(&self) -> Option<String> {
+    //     // is there a delegation tag?
+    //     let delegation_tag: Vec<String> = self
+    //         .tags
+    //         .iter()
+    //         .filter(|x| x.len() == 4)
+    //         .filter(|x| x.get(0).unwrap() == "delegation")
+    //         .take(1)
+    //         .next()?
+    //         .to_vec(); // get first tag
 
-        //let delegation_tag = self.tag_values_by_name("delegation");
-        // delegation tags should have exactly 3 elements after the name (pubkey, condition, sig)
-        // the event is signed by the delagatee
-        let delegatee = &self.pubkey;
-        // the delegation tag references the claimed delagator
-        let delegator: &str = delegation_tag.get(1)?;
-        let querystr: &str = delegation_tag.get(2)?;
-        let sig: &str = delegation_tag.get(3)?;
+    //     //let delegation_tag = self.tag_values_by_name("delegation");
+    //     // delegation tags should have exactly 3 elements after the name (pubkey, condition, sig)
+    //     // the event is signed by the delagatee
+    //     let delegatee = &self.pubkey;
+    //     // the delegation tag references the claimed delagator
+    //     let delegator: &str = delegation_tag.get(1)?;
+    //     let querystr: &str = delegation_tag.get(2)?;
+    //     let sig: &str = delegation_tag.get(3)?;
 
-        // attempt to get a condition query; this requires the delegation to have a valid signature.
-        if let Some(cond_query) = validate_delegation(delegator, delegatee, querystr, sig) {
-            // The signature was valid, now we ensure the delegation
-            // condition is valid for this event:
-            if cond_query.allows_event(self) {
-                // since this is allowed, we will provide the delegatee
-                Some(delegator.into())
-            } else {
-                debug!("an event failed to satisfy delegation conditions");
-                None
-            }
-        } else {
-            debug!("event had had invalid delegation signature");
-            None
-        }
-    }
+    //     // attempt to get a condition query; this requires the delegation to have a valid signature.
+    //     if let Some(cond_query) = validate_delegation(delegator, delegatee, querystr, sig) {
+    //         // The signature was valid, now we ensure the delegation
+    //         // condition is valid for this event:
+    //         if cond_query.allows_event(self) {
+    //             // since this is allowed, we will provide the delegatee
+    //             Some(delegator.into())
+    //         } else {
+    //             debug!("an event failed to satisfy delegation conditions");
+    //             None
+    //         }
+    //     } else {
+    //         debug!("event had had invalid delegation signature");
+    //         None
+    //     }
+    // }
 
-    /// Update delegation status
-    pub fn update_delegation(&mut self) {
-        self.delegated_by = self.delegated_author();
-    }
+    // /// Update delegation status
+    // pub fn update_delegation(&mut self) {
+    //     self.delegated_by = self.delegated_author();
+    // }
     /// Build an event tag index
     pub fn build_index(&mut self) {
         // if there are no tags; just leave the index as None
