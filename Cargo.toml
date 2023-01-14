@@ -3,6 +3,10 @@ name = "arcdex"
 version = "0.1.0"
 edition = "2021"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
 [dependencies]
+futures-channel = "0.3.25"
+futures-util = "0.3.25"
+tokio = { version = "1", features = ["full", "tracing", "signal"] }
+tokio-tungstenite = { version = "0.17", features = ["native-tls"] }
+tungstenite = "0.17"
+url = "2.3.1"
